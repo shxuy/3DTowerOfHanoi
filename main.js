@@ -58,15 +58,15 @@ function setup() {
         var up = [0, 1, 0];
         var cameraM = m4.lookAt(eye, target, up);
 
-        var viewM = twgl.m4.inverse(cameraM);
+        var viewM = m4.inverse(cameraM);
         viewM = m4.multiply(ab.getMatrix(), viewM);
 
         var fieldOfView = Math.PI / 4;
         var projectionM = m4.perspective(fieldOfView, 2, 10, 1000);
 
         // get lighting information
-        var lightPosition = [-140, 0, 0]; // the position of a single light in world coordinate
-        var lightDirection = v3.normalize(v3.subtract(lightPosition, target)); // now light direction is in world coordinate
+        var lightPosition = [0, 150, 300]; // the position of a single light in world coordinate
+        var lightDirection = v3.subtract(target, lightPosition); // now light direction is in world coordinate
         lightDirection = m4.transformPoint(viewM, lightDirection); // but we need light direction in camera coordinate,
         // as said in allObjects.js
 
