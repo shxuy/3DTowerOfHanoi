@@ -80,15 +80,11 @@ var Ground = undefined;
 
             // with the vertex shader, we need to pass it positions as an attribute - so set up that communication
             shaderProgram.PositionAttribute = gl.getAttribLocation(shaderProgram, 'vPosition');
-            shaderProgram.NormalAttribute = gl.getAttribLocation(shaderProgram, 'vNormal');
 
             // this gives us access to uniforms
-            shaderProgram.ModelViewLoc = gl.getUniformLocation(shaderProgram, 'uModelView');
-            shaderProgram.ProjectionLoc = gl.getUniformLocation(shaderProgram, 'uProjection');
-            shaderProgram.NormalMatrixLoc = gl.getUniformLocation(shaderProgram, 'uNormal');
+            shaderProgram.MVPLoc = gl.getUniformLocation(shaderProgram, 'uMVP');
             shaderProgram.MVPFromLightLoc = gl.getUniformLocation(shaderProgram, 'uMVPFromLight');
             shaderProgram.ColorLoc = gl.getUniformLocation(shaderProgram, 'uColor');
-            shaderProgram.LightDirectionLoc = gl.getUniformLocation(shaderProgram, 'uLightDirection');
             shaderProgram.LightColorLoc = gl.getUniformLocation(shaderProgram, 'uLightColor');
             shaderProgram.ShadowMapLoc = gl.getUniformLocation(shaderProgram, 'uShadowMap');
 
@@ -102,23 +98,12 @@ var Ground = undefined;
                 this.width / 2, 0,  this.width / 2,
                 -this.width / 2, 0,  this.width / 2
             ];
-            // normals
-            normal = [
-                0, 1, 0,
-                0, 1, 0,
-                0, 1, 0,
-                0, 1, 0,
-                0, 1, 0,
-                0, 1, 0
-            ]
+
 
             // now to make the buffers
             posBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPos), gl.STATIC_DRAW);
-            normalBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
         }
     }
 
@@ -157,9 +142,8 @@ var Ground = undefined;
         // we make a model matrix to place the ground in the world
         var modelM = m4.identity();
         m4.setTranslation(modelM, this.position, modelM);
-        var modelViewM = m4.multiply(modelM, drawingState.view);
-        var normalM = m4.inverse(m4.transpose(modelViewM));
-        var MVP = m4.multiply(m4.multiply(modelM, drawingState.lightView), drawingState.lightProjection);
+        var MVP = m4.multiply(m4.multiply(modelM, drawingState.view), drawingState.projection);
+        var MVPFromLight = m4.multiply(m4.multiply(modelM, drawingState.lightView), drawingState.lightProjection);
 
         var gl = drawingState.gl;
 
@@ -168,15 +152,11 @@ var Ground = undefined;
 
         // we need to enable the attributes we had set up, which are set disabled by default by system
         gl.enableVertexAttribArray(shaderProgram.PositionAttribute);
-        gl.enableVertexAttribArray(shaderProgram.NormalAttribute);
 
         // set the uniforms
-        gl.uniformMatrix4fv(shaderProgram.ModelViewLoc, false, modelViewM);
-        gl.uniformMatrix4fv(shaderProgram.ProjectionLoc, false, drawingState.projection);
-        gl.uniformMatrix4fv(shaderProgram.NormalMatrixLoc, false, normalM);
-        gl.uniformMatrix4fv(shaderProgram.MVPFromLightLoc, false, MVP);
+        gl.uniformMatrix4fv(shaderProgram.MVPLoc, false, MVP);
+        gl.uniformMatrix4fv(shaderProgram.MVPFromLightLoc, false, MVPFromLight);
         gl.uniform3fv(shaderProgram.ColorLoc, this.color);
-        gl.uniform3fv(shaderProgram.LightDirectionLoc, drawingState.lightDirection);
         gl.uniform3fv(shaderProgram.LightColorLoc, drawingState.lightColor);
         gl.uniform1i(shaderProgram.ShadowMapLoc, 0); // we will store the shadow map in TMU0 soon, so instruct shader
         // programs to use use TMU0
@@ -184,8 +164,6 @@ var Ground = undefined;
         // connect the attributes to the buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
         gl.vertexAttribPointer(shaderProgram.PositionAttribute, 3, gl.FLOAT, false, 0, 0);
-        gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-        gl.vertexAttribPointer(shaderProgram.NormalAttribute, 3, gl.FLOAT, false, 0, 0);
 
         // Bind texture
         gl.activeTexture(gl.TEXTURE0); // bind our shadow map to TMU0
@@ -196,7 +174,6 @@ var Ground = undefined;
 
         // WebGL is a state machine, so do not forget to disable all attributes after every drawing
         gl.disableVertexAttribArray(shaderProgram.PositionAttribute);
-        gl.disableVertexAttribArray(shaderProgram.NormalAttribute);
     }
 
     /**
