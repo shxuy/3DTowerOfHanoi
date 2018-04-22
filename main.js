@@ -37,20 +37,23 @@ function setup() {
     // create a frame buffer object for shadow
     var framebuffer = createFramebufferForShadow(drawingState); // use drawingState.gl
 
-    // support user interactions
-    bindButtonsToGame(game);
-    bindKeysToGame(game);
-    var ab = new ArcBall(canvas);
+    var ab; // for arcball
+    /* please do not support user interactions here. interactions will be supported after we have get screen's fps.
+       Since we only use 10 frames to compute fps (see later codes) and nowadays screens' fps is greater than or equal
+       to 60 Hz, it only takes less than 0.167 second to compute fps and users may not notice the procedure.
+       If you support user interactions here and players revoke an alert message when we are computing fps, we cannot
+       get correct fps because alert message will interrupt screen refreshing. We may get a much smaller number so that
+       moving disc's speed will be abnormally fast.
+    */
 
     var realTime = 0; // since alert will interrupt the animation frame drawing procedure, we could not just use
      // performance.now()
-    var lastTime = 0;
 
     var frameIndex = 0;
-    var frameCount = 10; // compute user's fps every 10 frames
+    var frameCount = 10; // use first 10 frames to compute user's fps
     var startTimestamp = performance.now(); // for computing user's fps
 
-    var fps = 60; // I assume frame per second is 60 Hz, which will be corrected soon in function draw.
+    var fps = 60; // I assume fps is 60 Hz. It will be updated soon after the first 10 frames
 
     /**
      * the main drawing function
@@ -66,7 +69,9 @@ function setup() {
         var cameraM = m4.lookAt(eye, target, up);
 
         var viewM = m4.inverse(cameraM);
-        viewM = m4.multiply(ab.getMatrix(), viewM);
+        // when we are testing fps at the first stage, player has no control, which means arcball has not been defined
+        if (frameIndex > frameCount)
+            viewM = m4.multiply(ab.getMatrix(), viewM);
 
         var fieldOfView = Math.PI / 4;
         var projectionM = m4.perspective(fieldOfView, 2, 10, 1000);
@@ -178,17 +183,18 @@ function setup() {
                 object.drawAfter(drawingState); // no drawAfter functions actually
         });
 
-        // advance the clock appropriately (unless its stopped)
-        realTime += 1000 / fps;
         frameIndex++;
+        realTime += 1000 / fps; // advance the clock appropriately (unless its stopped)
 
-        // update fps
-        if (frameIndex == frameCount) {
-            fps = Math.round(frameCount * 1000 / (performance.now() - startTimestamp));
-            frameIndex = 0;
-            startTimestamp = performance.now();
+        if (frameIndex === frameCount) {
+            // update fps and 1 second = 1000 mill-seconds
+            fps = Math.round(frameCount * 1000 / (performance.now()- startTimestamp));
+
+            // now we could support user interactions
+            bindButtonsToGame(game);
+            bindKeysToGame(game);
+            ab = new ArcBall(canvas);
         }
-        console.log(fps);
 
         window.requestAnimationFrame(draw);
     }
