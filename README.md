@@ -39,7 +39,7 @@ hot keys:
 | Safari           | N/A                               | very frozen | N/A    |
 | Edges            | crash                             | N/A         | N/A    |
   
-If you want make animation more fluent, please use a smaller number of framebuffer.resolution defined in allObjects.js 
+If you want make animation more fluent, please use a smaller number for framebuffer.resolution defined in allObjects.js 
 at the expense of aliasing of the shadow.
 
 ## Code modification suggestions
