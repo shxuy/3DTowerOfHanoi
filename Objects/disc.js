@@ -276,13 +276,13 @@ var Disc = undefined;
 
         // connect the attribute to the buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-        gl.enableVertexAttribArray(shadowProgram.PositionAttribute);
-
         gl.vertexAttribPointer(shadowProgram.PositionAttribute, 3, gl.FLOAT, false, 0, 0);
-        gl.disableVertexAttribArray(shadowProgram.PositionAttribute);
 
         // Do the drawing
         gl.drawArrays(gl.TRIANGLES, 0, this.vertexPos.length / 3);
+
+        // WebGL is a state machine, so do not forget to disable all attributes after every drawing
+        gl.disableVertexAttribArray(shadowProgram.PositionAttribute);
     }
 
     /**

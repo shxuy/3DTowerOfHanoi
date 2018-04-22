@@ -40,7 +40,7 @@ var Ground = undefined;
     Ground = function Ground(name, position, width, color) {
         this.name = name || 'ground';
         this.position = position || [0.0, 0.0, 0.0];
-        this.width = width || 2000.0; // things will go from -1000 to +1000 by default
+        this.width = width || 2000; // things will go from -1000 to +1000 by default
         this.color = color || normalizeRgb(255, 255, 255); // white ground
     }
 
@@ -136,18 +136,12 @@ var Ground = undefined;
         // we need to enable the attributes we had set up, which are set disabled by default by system
         gl.enableVertexAttribArray(shadowProgram.PositionAttribute);
 
-        // connect the attribute to the buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-        gl.vertexAttribPointer(shadowProgram.PositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
         // set the uniform
         gl.uniformMatrix4fv(shadowProgram.MVPLoc, false, MVP);
 
-        // Bind texture
-        // we use TMU #0 for shadow map
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, drawingState.shadowMap);
-        gl.uniform1i(shadowProgram.ShadowMapLoc, 0); // we have already stored the shadow map in TMU0
+        // connect the attribute to the buffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+        gl.vertexAttribPointer(shadowProgram.PositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
         // Do the drawing
         gl.drawArrays(gl.TRIANGLES, 0, vertexPos.length / 3);

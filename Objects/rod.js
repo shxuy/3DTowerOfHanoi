@@ -315,9 +315,7 @@ var Rod = undefined;
 
         // connect the attribute to the buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-        gl.enableVertexAttribArray(shadowProgram.PositionAttribute);
         gl.vertexAttribPointer(shadowProgram.PositionAttribute, 3, gl.FLOAT, false, 0, 0);
-        gl.disableVertexAttribArray(shadowProgram.PositionAttribute);
 
         // Do the drawing
         gl.drawArrays(gl.TRIANGLES, 0, vertexPos.length / 3);

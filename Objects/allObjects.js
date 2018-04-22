@@ -240,6 +240,8 @@ function createFramebufferForShadow(drawingState) {
     // use linear filters for anti-aliasing
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
     // Thirdly, create a render buffer for the frame buffer. You can use any name for the render buffer, such as rb.
     // You do not have to set it as an attribute of the JavaScript object variable framebuffer like here.
