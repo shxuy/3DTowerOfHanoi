@@ -1,7 +1,7 @@
 /** the main file
  *
- * If you want to adjust the position of camera in world coordinate, the angele of field of view, the position of light
- * in world coordinate, please change numbers in function draw in main.js.
+ * If you want to adjust the position of camera in world coordinate, the angele of field of view or the position of
+ * light in world coordinate, please change numbers in function draw in main.js
  * If you want to adjust the position or the size of rods and discs, or the flying altitude of the moving disc, please
  * modify numbers in function Game in gameLogic.js
  *
@@ -19,7 +19,8 @@ var v3 = twgl.v3;
 function setup() {
 
     var canvas = $('#myCanvas')[0];
-    var gl = canvas.getContext('webgl');
+    var gl = canvas.getContext('webgl'); // gl should not be a global variable and it should be wrapped in object
+    // drawingState defined in allObjects.js so that you could draw many animations on one web page.
 
     // start a new game
     var game = new Game();
