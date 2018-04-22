@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-convert pictures to base64 strings stroed in a JavaScript file so that we can load texture in native browser.
+convert pictures to base64 strings stored in a JavaScript file so that we can load texture in native browser.
 
 It is just a tool for programmers and it is not used by the html file so players can delete it safely.
 
@@ -19,7 +19,7 @@ import base64
 __author__ = 'Nick Yang'
 
 
-def parse_file(filename):
+def parse_file(filename, type):
 
     with open(filename, "rb") as f_in:
         encoded_string = base64.b64encode(f_in.read())
@@ -27,9 +27,12 @@ def parse_file(filename):
     with open(filename + ".js", "w") as f_out:
         f_out.write("var LoadedImageFiles = LoadedImageFiles || {};\n")
 
-        f_out.write("LoadedImageFiles[\"%s\"] = new Image();\n" % (filename))
+        f_out.write("LoadedImageFiles[\"%s\"] = new Image();\n" % filename)
 
-        f_out.write("LoadedImageFiles[\"%s\"].src = \"data:image/jpeg;base64,%s\"\n" % (filename, encoded_string))
+        if type == "jpg" or type == "jpeg":
+            f_out.write("LoadedImageFiles[\"%s\"].src = \"data:image/jpeg;base64,%s\"\n" % (filename, encoded_string))
+        elif type == "png":
+            f_out.write("LoadedImageFiles[\"%s\"].src = \"data:image/png;base64,%s\"\n" % (filename, encoded_string))
 
 
 def main(argv):
@@ -41,8 +44,8 @@ def main(argv):
         filename = argv[i]
         tokens = filename.split(".")
         if len(tokens) >= 1 and (tokens[len(tokens) - 1] == "jpg" or tokens[len(tokens) - 1] == "jpeg" or tokens[len(tokens) - 1] == "png"):
-            print("Parsing File : %s" % (filename))
-            parse_file(filename)
+            print("Parsing File : %s" % filename)
+            parse_file(filename, tokens[len(tokens) - 1])
 
 
 if __name__ == '__main__':
