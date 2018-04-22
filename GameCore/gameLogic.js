@@ -10,7 +10,7 @@ function Game() {
     var rodDistance = 160; // the distance between two nearest rods
     var rodDiameter = 20;
     var rodHeight = 60;
-    var rodPrecision = 25;
+    var rodPrecision = 40;
     this.rods[0] = new Rod('rod1', [-rodDistance, 0, 0], rodDiameter, rodHeight, rodPrecision);
     this.rods[1] = new Rod('rod2', [0, 0, 0], rodDiameter, rodHeight, rodPrecision);
     this.rods[2] = new Rod('rod3', [rodDistance, 0, 0], rodDiameter, rodHeight, rodPrecision);
