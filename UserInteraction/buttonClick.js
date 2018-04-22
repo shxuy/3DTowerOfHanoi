@@ -33,3 +33,13 @@ function disableButtons() {
     $('#button-from3to2')[0].disabled = true;
     $('#button-solve-it')[0].disabled = true;
 }
+
+function enableButtons() {
+    $('#button-from1to2')[0].disabled = false;
+    $('#button-from1to3')[0].disabled = false;
+    $('#button-from2to1')[0].disabled = false;
+    $('#button-from2to3')[0].disabled = false;
+    $('#button-from3to1')[0].disabled = false;
+    $('#button-from3to2')[0].disabled = false;
+    $('#button-solve-it')[0].disabled = false;
+}

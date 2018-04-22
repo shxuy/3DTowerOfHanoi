@@ -82,6 +82,8 @@ Game.prototype.tryToMoveDisc = function(from, to) {
         return;
     }
 
+    disableButtons();
+
     this.movingUpwards = true; // prepared for moving upwards
     this.movingVertically = false;
     this.movingDownwards = false;
@@ -150,6 +152,8 @@ Game.prototype.updateDiscPosition = function(drawingState) {
             this.movingUpwards = false; // stop moving
             this.movingVertically = false;
             this.movingDownwards = false;
+
+            enableButtons();
         }
    }
    // the remained case: nothing is moving

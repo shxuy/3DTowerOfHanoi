@@ -42,11 +42,15 @@ function setup() {
     bindKeysToGame(game);
     var ab = new ArcBall(canvas);
 
-    var count = 60; // update fps every 60 frames
-    var index = count;
-    var startTime = performance.now();
-    var realTime = 0;
-    var fps = 60; // I assume fps is 60 Hz. It will be updated soon after the first 60 frames
+    var realTime = 0; // since alert will interrupt the animation frame drawing procedure, we could not just use
+     // performance.now()
+    var lastTime = 0;
+
+    var frameIndex = 0;
+    var frameCount = 10; // compute user's fps every 10 frames
+    var startTimestamp = performance.now(); // for computing user's fps
+
+    var fps = 60; // I assume frame per second is 60 Hz, which will be corrected soon in function draw.
 
     /**
      * the main drawing function
@@ -54,9 +58,6 @@ function setup() {
     function draw() {
         // check whether the game is over
         game.checkResult();
-
-        // advance the clock appropriately (unless its stopped)
-        realTime += 1000 / fps;
 
         // figure out the transforms
         var eye = [0, 150, 300];
@@ -177,12 +178,19 @@ function setup() {
                 object.drawAfter(drawingState); // no drawAfter functions actually
         });
 
-        if (index--) {
-            window.requestAnimationFrame(draw);
-        } else {
-            fps = count * 1000 / (performance.now()- startTime); // update fps and 1 second = 1000 mill-seconds
-            draw();
+        // advance the clock appropriately (unless its stopped)
+        realTime += 1000 / fps;
+        frameIndex++;
+
+        // update fps
+        if (frameIndex == frameCount) {
+            fps = Math.round(frameCount * 1000 / (performance.now() - startTimestamp));
+            frameIndex = 0;
+            startTimestamp = performance.now();
         }
+        console.log(fps);
+
+        window.requestAnimationFrame(draw);
     }
     draw();
 }
