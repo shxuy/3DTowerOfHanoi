@@ -40,7 +40,7 @@ var Ground = undefined;
     Ground = function Ground(name, position, width, color) {
         this.name = name || 'ground';
         this.position = position || [0.0, 0.0, 0.0];
-        this.width = width || 600.0; // things will go from -300 to +300 by default
+        this.width = width || 2000.0; // things will go from -1000 to +1000 by default
         this.color = color || normalizeRgb(255, 255, 255); // white ground
     }
 
@@ -133,14 +133,12 @@ var Ground = undefined;
         // choose the shader program we have compiled
         gl.useProgram(shadowProgram);
 
-        // enable all attributes
+        // we need to enable the attributes we had set up, which are set disabled by default by system
         gl.enableVertexAttribArray(shadowProgram.PositionAttribute);
 
         // connect the attribute to the buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
         gl.vertexAttribPointer(shadowProgram.PositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-
 
         // set the uniform
         gl.uniformMatrix4fv(shadowProgram.MVPLoc, false, MVP);
@@ -154,7 +152,7 @@ var Ground = undefined;
         // Do the drawing
         gl.drawArrays(gl.TRIANGLES, 0, vertexPos.length / 3);
 
-        // since WebGl is a state machine, do not forget to disable all attributes after every drawing
+        // WebGL is a state machine, so do not forget to disable all attributes after every drawing
         gl.disableVertexAttribArray(shadowProgram.PositionAttribute);
     }
 
@@ -174,6 +172,10 @@ var Ground = undefined;
         // choose the shader program we have compiled
         gl.useProgram(shaderProgram);
 
+        // we need to enable the attributes we had set up, which are set disabled by default by system
+        gl.enableVertexAttribArray(shaderProgram.PositionAttribute);
+        gl.enableVertexAttribArray(shaderProgram.NormalAttribute);
+
         // set the uniforms
         gl.uniformMatrix4fv(shaderProgram.ModelViewLoc, false, modelViewM);
         gl.uniformMatrix4fv(shaderProgram.ProjectionLoc, false, drawingState.projection);
@@ -182,26 +184,25 @@ var Ground = undefined;
         gl.uniform3fv(shaderProgram.ColorLoc, this.color);
         gl.uniform3fv(shaderProgram.LightDirectionLoc, drawingState.lightDirection);
         gl.uniform3fv(shaderProgram.LightColorLoc, drawingState.lightColor);
-        gl.uniform1i(shaderProgram.ShadowMapLoc, 0); // we have already stored the shadow map in TMU0
+        gl.uniform1i(shaderProgram.ShadowMapLoc, 0); // we will store the shadow map in TMU0 soon, so instruct shader
+        // programs to use use TMU0
 
         // connect the attributes to the buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-        gl.enableVertexAttribArray(shaderProgram.PositionAttribute);
         gl.vertexAttribPointer(shaderProgram.PositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-
         gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-        gl.enableVertexAttribArray(shaderProgram.NormalAttribute);
         gl.vertexAttribPointer(shaderProgram.NormalAttribute, 3, gl.FLOAT, false, 0, 0);
 
-
-        // Since we have bound the shadow map to TMU0 in function draw in main.js, please do not use TMU0 for other
-        // textures here.
+        // Bind texture
+        gl.activeTexture(gl.TEXTURE0); // bind our shadow map to TMU0
+        gl.bindTexture(gl.TEXTURE_2D, drawingState.shadowMap);
 
         // Do the drawing
         gl.drawArrays(gl.TRIANGLES, 0, vertexPos.length / 3);
 
-
+        // WebGL is a state machine, so do not forget to disable all attributes after every drawing
+        gl.disableVertexAttribArray(shaderProgram.PositionAttribute);
+        gl.disableVertexAttribArray(shaderProgram.NormalAttribute);
     }
 
     /**

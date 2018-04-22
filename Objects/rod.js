@@ -88,13 +88,9 @@ var Rod = undefined;
             }
 
             // with the vertex shader, we need to pass it positions as an attribute - so set up that communication
-            // we also need to enable the attributes we had set up
             shaderProgram.PositionAttribute = gl.getAttribLocation(shaderProgram, 'vPosition');
-            gl.enableVertexAttribArray(shaderProgram.PositionAttribute);
             shaderProgram.NormalAttribute = gl.getAttribLocation(shaderProgram, 'vNormal');
-            gl.enableVertexAttribArray(shaderProgram.NormalAttribute);
             shaderProgram.TexCoordAttribute = gl.getAttribLocation(shaderProgram, 'vTexCoord');
-            gl.enableVertexAttribArray(shaderProgram.TexCoordAttribute);
 
             // this gives us access to uniforms
             shaderProgram.ModelViewLoc = gl.getUniformLocation(shaderProgram, 'uModelView');
@@ -127,9 +123,17 @@ var Rod = undefined;
 
             // set up texture
             texture = gl.createTexture();
+            // following three lines are unnecessary
             gl.activeTexture(gl.TEXTURE1); // since we use TMU0 for shadow map, we use TMU1 here.
             gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null); // return the image data
+            // pointer to the system
+
+            // load texture. Following two lines are critical for binding our texture object and the image
+            gl.bindTexture(gl.TEXTURE_2D, texture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, LoadedImageFiles["woodTexture.jpg"]);
+            // since we always load texture JavaScript files before loading objects JavaScript files, all images must
+            // have finished loading procedures now
 
             // Option 1 : Use mipmap, select interpolation mode
             gl.generateMipmap(gl.TEXTURE_2D);
@@ -142,6 +146,9 @@ var Rod = undefined;
             // Optional ... if your shader & texture coordinates go outside the [0,1] range
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT); // I want symmetrical pattern
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+
+            // return the texture pointer to the system (this step is unnecessary)
+            gl.bindTexture(gl.TEXTURE_2D, null);
         }
     }
     
@@ -300,6 +307,9 @@ var Rod = undefined;
         // choose the shader program we have compiled
         gl.useProgram(shadowProgram);
 
+        // we need to enable the attributes we had set up, which are set disabled by default by system
+        gl.enableVertexAttribArray(shadowProgram.PositionAttribute);
+
         // set the uniform
         gl.uniformMatrix4fv(shadowProgram.MVPLoc, false, MVP);
 
@@ -311,6 +321,9 @@ var Rod = undefined;
 
         // Do the drawing
         gl.drawArrays(gl.TRIANGLES, 0, vertexPos.length / 3);
+
+        // WebGL is a state machine, so do not forget to disable all attributes after every drawing
+        gl.disableVertexAttribArray(shadowProgram.PositionAttribute);
     }
 
     /**
@@ -329,6 +342,11 @@ var Rod = undefined;
         // choose the shader program we have compiled
         gl.useProgram(shaderProgram);
 
+        // we need to enable the attributes we had set up, which are set disabled by default by system
+        gl.enableVertexAttribArray(shaderProgram.PositionAttribute);
+        gl.enableVertexAttribArray(shaderProgram.NormalAttribute);
+        gl.enableVertexAttribArray(shaderProgram.TexCoordAttribute);
+
         // set the uniforms
         gl.uniformMatrix4fv(shaderProgram.ModelViewLoc, false, modelViewM);
         gl.uniformMatrix4fv(shaderProgram.ProjectionLoc, false, drawingState.projection);
@@ -336,8 +354,9 @@ var Rod = undefined;
         gl.uniformMatrix4fv(shaderProgram.MVPFromLightLoc, false, MVP);
         gl.uniform3fv(shaderProgram.LightDirectionLoc, drawingState.lightDirection);
         gl.uniform3fv(shaderProgram.LightColorLoc, drawingState.lightColor);
-        gl.uniform1i(shaderProgram.ShadowMapLoc, 0); // we have already stored the shadow map in TMU0
-        gl.uniform1i(shaderProgram.TexSamplerLocLoc, 1); // so we will store the image texture in TMU1 soon
+        gl.uniform1i(shaderProgram.ShadowMapLoc, 0); // we will store the shadow map in TMU0 soon, so instruct shader
+        // programs to use use TMU0
+        gl.uniform1i(shaderProgram.TexSamplerLoc, 1); // so we will store the image texture in TMU1 soon
 
         // connect the attributes to the buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
@@ -348,13 +367,18 @@ var Rod = undefined;
         gl.vertexAttribPointer(shaderProgram.TexCoordAttribute, 2, gl.FLOAT, false, 0, 0);
 
         // Bind texture
-        // Since we have bound the shadow map to TMU0 in function draw in main.js, please do not use TMU0 for other
-        // textures here.
+        gl.activeTexture(gl.TEXTURE0); // bind our shadow map to TMU0
+        gl.bindTexture(gl.TEXTURE_2D, drawingState.shadowMap);
         gl.activeTexture(gl.TEXTURE1); // store wood texture in TMU1
 	    gl.bindTexture(gl.TEXTURE_2D, texture);
 
 	    // Do the drawing
         gl.drawArrays(gl.TRIANGLES, 0, vertexPos.length / 3);
+
+        // WebGL is a state machine, so do not forget to disable all attributes after every drawing
+        gl.disableVertexAttribArray(shaderProgram.PositionAttribute);
+        gl.disableVertexAttribArray(shaderProgram.NormalAttribute);
+        gl.disableVertexAttribArray(shaderProgram.TexCoordAttribute);
     }
 
     /**

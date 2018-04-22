@@ -1,4 +1,12 @@
 /** the main file
+ *
+ * If you want to adjust the position of camera in world coordinate, the angele of field of view, the position of light
+ * in world coordinate, please change numbers in function draw in main.js.
+ * If you want to adjust the position or the size of rods and discs, or the flying altitude of the moving disc, please
+ * modify numbers in function Game in gameLogic.js
+ *
+ * I use some parallel lights, but you can swift to a dot light with a lot of work. I give out a brief instruction in
+ * main.js
 */
 
 var m4 = twgl.m4; // abbreviation
@@ -54,10 +62,10 @@ function setup() {
         viewM = m4.multiply(ab.getMatrix(), viewM);
 
         var fieldOfView = Math.PI / 4;
-        var projectionM = m4.perspective(fieldOfView, 3, 10, 1000);
+        var projectionM = m4.perspective(fieldOfView, 2, 10, 1000);
 
         // get lighting information
-        var lightPosition = [-180, 200, -80]; // the position of a single light in world coordinate
+        var lightPosition = [-140, 0, 0]; // the position of a single light in world coordinate
         var lightDirection = v3.normalize(v3.subtract(lightPosition, target)); // now light direction is in world coordinate
         lightDirection = m4.transformPoint(viewM, lightDirection); // but we need light direction in camera coordinate,
         // as said in allObjects.js
@@ -124,8 +132,11 @@ function setup() {
             realTime : realTime,
         }
 
-        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer); // draw to the framebuffer
-        // first, let's clear the background
+        // draw to the framebuffer
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        gl.viewport(0, 0, framebuffer.resolution, framebuffer.resolution);
+
+        // first, let's clear the background in the frame buffer
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -135,16 +146,14 @@ function setup() {
                 object.drawBefore(drawingState);
         });
 
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null); // return the frame buffer pointer to the system, now we can draw
-        // on the screen
+        // return the frame buffer pointer to the system, now we can draw on the screen
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, myCanvas.width, myCanvas.height);
+
         // let's clear the screen as a whiteboard
         gl.clearColor(1.0, 1.0, 1.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        // bind shadow depth map texture to TMU0
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, framebuffer.texture);
 
         allObjects.forEach(function (object) {
             if(object.draw)

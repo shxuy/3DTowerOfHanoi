@@ -142,8 +142,6 @@ function initializeObjects(game, drawingState) {
             }
         }
     });
-
-
 }
 
 var shadowProgram = undefined;
