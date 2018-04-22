@@ -42,7 +42,7 @@ hot keys:
 If you want make animation more fluent, please use a smaller number of framebuffer.resolution defined in allObjects.js 
 at the expense of aliasing of the shadow.
 
-## Code Modification Suggestions
+## Code modification suggestions
 1. If you want to adjust the position of camera in world coordinate, the angele of field of view or the position of 
 light in world coordinate, please change numbers in function draw in main.js
 2. If you want to adjust the position or the size of rods and discs, or the flying altitude of the moving disc, please
