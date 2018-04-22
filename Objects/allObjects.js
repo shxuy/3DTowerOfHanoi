@@ -217,8 +217,8 @@ function createFramebufferForShadow(drawingState) {
 
     /* Secondly, create a texture for the frame buffer. You can use any name for the texture, such as tex. You do not
        have to set it as an attribute of the JavaScript object variable framebuffer like here. Then you could return a
-       Javascript array which contains a framebuffer and a texture for this function and modify codes in main.js
-       I just set texture as an attribute of the JavaScript object variable framebuffer for simplicity. */
+       Javascript array which contains a framebuffer, a texture and the resolution for this function and modify codes
+       in main.js. I just set texture as an attribute of the JavaScript object variable framebuffer for simplicity. */
     framebuffer.texture = gl.createTexture();
     if (!framebuffer.texture) {
         console.log("fail to create a texture for the frame buffer");
@@ -233,9 +233,22 @@ function createFramebufferForShadow(drawingState) {
        WebGL provides at least 8 TMUs, and my laptop has 16 TMUs. */
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, framebuffer.texture);
-    framebuffer.resolution = 2048; // resolution must be 256 or 1024 or 2048 for WebGL
+
+    /* resolution must be power of 2, such as 256 or 1024 for WebGL because we use a texture. You could use any name for
+       the variable here, such  as res. Then you could return a Javascript array which contains a framebuffer, a texture
+       and the resolution for this function and modify codes in main.js. I just set the resolution number as an
+       attribute of the JavaScript object variable framebuffer for simplicity.
+       Since we use both a texture and a render buffer for the framebuffer, the resolution is constrained by both of them.
+       let's denote Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE), gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) as n.
+       Because we draw 2 pass for every frame, we cannot just use n for resolution or it will crash.
+       The maximum resolution here we can utilize is n / 2. Because 2 pass * (n / 2) ^ 2 = n ^ 2 / 4 <= n ^ 2 and n / 2
+       is a power of 2, n / 2 is fine.
+       If you do not have a high-performance independent GPU, you could use a smaller number such as 1024 here at the
+       expense of aliasing of the shadow
+       */
+    framebuffer.resolution = Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE), gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 2;
     // use null to return the texture's image data pointer to system's frame buffer (this step is unnecessary)
-    // in fact, you could use any number instead of resolution.
+    // in fact, you could use any number in texImage2D instead of resolution.
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.resolution, framebuffer.resolution, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     // use linear filters for anti-aliasing
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);

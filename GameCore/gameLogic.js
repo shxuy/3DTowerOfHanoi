@@ -34,8 +34,8 @@ function Game() {
     this.movingDownwards = false; // whether there is a disc is moving downwards
     
     this.movingDisc = undefined; // for moving animations
-    this.indexOfFromRod = undefined;
-    this.indexOfToRod = undefined;
+    this.fromRod = undefined;
+    this.toRod = undefined;
 
     this.lastTime = undefined;
 
@@ -59,6 +59,8 @@ Game.prototype.getNumberOfDiscs = function() {
  * try to move a disk
  * @param from: the index of the starting rod (index starts from 1)
  * @param to: the index of the ending rod (index starts from 1)
+ * @param drawingState: a Javascript Object defined in allObjects.js. We use it to update the number of milliseconds since
+ *                      the program started running
  */
 Game.prototype.tryToMoveDisc = function(from, to) {
     from = from || 1;
@@ -73,7 +75,7 @@ Game.prototype.tryToMoveDisc = function(from, to) {
         return;
     }
     if (this.rods[to - 1].getNumberOfDiscs() !== 0 &&
-        this.rods[to - 1].stackOfDiscs[this.rods[to - 1].getNumberOfDiscs() - 1].outerDiameter >
+        this.rods[to - 1].stackOfDiscs[this.rods[to - 1].getNumberOfDiscs() - 1].outerDiameter <
         this.rods[from - 1].stackOfDiscs[this.rods[from - 1].getNumberOfDiscs() - 1].outerDiameter) {
         alert('The disc you want to move is bigger than the disc on the top of the '
             + ordinalNumber(from) + ' rod');
@@ -85,8 +87,8 @@ Game.prototype.tryToMoveDisc = function(from, to) {
     this.movingDownwards = false;
 
     this.movingDisc = this.rods[from - 1].stackOfDiscs.pop();
-    this.indexOfFromRod = from - 1;
-    this.indexOfToRod = to - 1;
+    this.fromRod = this.rods[from - 1];
+    this.toRod = this.rods[to - 1];
 
     this.playerSteps.push([from, to]);
 }
@@ -97,8 +99,8 @@ Game.prototype.tryToMoveDisc = function(from, to) {
  * will be changed
  * please call it in function draw in main.js
  */
-Game.prototype.MovingDisc = function(drawingState) {
-    var movingSpeed = 0.25;  // moving units per millisecond
+Game.prototype.updateDiscPosition = function(drawingState) {
+    var movingSpeed = 0.25;  // moving units in world coordinate per millisecond
     var flyingAltitude = 80; // the flying altitude of the moving disc in world coordinate
 
     // on the first call, do nothing
@@ -119,15 +121,15 @@ Game.prototype.MovingDisc = function(drawingState) {
             this.movingVertically = true;
             this.movingDownwards = false;
         }
-   } else if (movingVertically) {
+   } else if (this.movingVertically) {
         // the position of the moving disc after the updating in the last frame
         var posOfDisc = this.movingDisc.position;
         // the coordinate of the sky above the target rod
-        var posOfRod = v3.create(this.rods[indexOfToRod].position[0], flyingAltitude, this.rods[indexOfToRod].position[2]);
+        var posOfRod = v3.create(this.toRod.position[0], flyingAltitude, this.toRod.position[2]);
         var forward = delta * movingSpeed;
         if (v3.distance(posOfDisc, posOfRod) > forward) {
             var discToRod = v3.subtract(posOfRod, posOfDisc);
-            var movingVector = v3.mulScalar(v3.normalize(discToRod), movingSpeed);
+            var movingVector = v3.mulScalar(v3.normalize(discToRod), forward);
             this.movingDisc.position = v3.add(posOfDisc, movingVector);
         } else { // we have reached the right place
             this.movingDisc.position = posOfRod;
@@ -135,18 +137,16 @@ Game.prototype.MovingDisc = function(drawingState) {
             this.movingVertically = false;
             this.movingDownwards = true; // start to moving downwards
         }
-   } else if (movingDownwards) {
-        var number = this.rods[indexOfToRod].getNumberOfDiscs(); // number of already existed discs on the target rod
+   } else if (this.movingDownwards) {
+        var number = this.toRod.getNumberOfDiscs(); // number of already existed discs on the target rod
         var targetAltitude = number * this.heightOfDisc; // the target height of the center of the bottom face of the
         // moving disc in world coordinate
         var down = delta * movingSpeed;
         if (this.movingDisc.position[1] - down > targetAltitude) {
-             this.movingDisc.position = [this.rods[indexOfToRod].position[0], this.movingDisc.position[1] - down,
-                                            this.rods[indexOfToRod].position[2]];
+             this.movingDisc.position = [this.toRod.position[0], this.movingDisc.position[1] - down, this.toRod.position[2]];
         } else {
-            this.movingDisc.position = [this.rods[indexOfToRod].position[0], targetAltitude,
-                                            this.rods[indexOfToRod].position[2]];
-            this.rods[indexOfToRod].stackOfDiscs.push(this.movingDisc);
+            this.movingDisc.position = [this.toRod.position[0], targetAltitude, this.toRod.position[2]];
+            this.toRod.stackOfDiscs.push(this.movingDisc);
             this.movingUpwards = false; // stop moving
             this.movingVertically = false;
             this.movingDownwards = false;

@@ -32,8 +32,9 @@ hot keys:
 4. You could click the button 'solve it' to watch the solving animation
 
 ## Miscellaneous
-1. It is best for computers, not mobile phones.
-2. I meant to let users use mouse to drag and drop any discs, but the implementation will be too complicated without a 
+1. Chrome's performance on animation is better than Safari's, so please use Chrome.
+2. It is best for computers, not mobile phones.
+3. I meant to let users use mouse to drag and drop any discs, but the implementation will be too complicated without a 
 physics engine because I have to implement collusion detection and mouse selection detection by myself. It is unwise 
 to reinvent the wheel and WebGL is a little low-level for games so I suggest you choosing any game engine such as 
 three.js to realize the feature. 

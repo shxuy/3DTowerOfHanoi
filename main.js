@@ -7,6 +7,10 @@
  *
  * I use some parallel lights, but you can swift to a dot light with a lot of work. I give out a brief instruction in
  * main.js
+ *
+ * If the animation is too frozen on your computer, please use a smaller number of framebuffer.resolution in
+ * allObjects.js at the expense of aliasing of the shadow
+ *
 */
 
 var m4 = twgl.m4; // abbreviation
@@ -24,33 +28,34 @@ function setup() {
     var drawingState = {
         gl : gl
     }
-    initializeObjects(game, drawingState);
+    initializeObjects(game, drawingState); // use drawingState.gl
 
     // compile the shader program for shadow
-    compileShadowProgram(drawingState);
+    compileShadowProgram(drawingState); // use drawingState.gl
 
     // create a frame buffer object for shadow
-    var framebuffer = createFramebufferForShadow(drawingState);
+    var framebuffer = createFramebufferForShadow(drawingState); // use drawingState.gl
 
     // support user interactions
     bindButtonsToGame(game);
     bindKeysToGame(game);
     var ab = new ArcBall(canvas);
 
-    var realTime;
-    var lastTime;
+    var count = 60; // update fps every 60 frames
+    var index = count;
+    var startTime = performance.now();
+    var realTime = 0;
+    var fps = 60; // I assume fps is 60 Hz. It will be updated soon after the first 60 frames
 
     /**
-     * the main function
+     * the main drawing function
     */
     function draw() {
         // check whether the game is over
         game.checkResult();
 
         // advance the clock appropriately (unless its stopped)
-        var curTime = Date.now();
-        realTime += (curTime - lastTime);
-        lastTime = curTime;
+        realTime += 1000 / fps;
 
         // figure out the transforms
         var eye = [0, 150, 300];
@@ -134,6 +139,9 @@ function setup() {
             realTime : realTime,
         }
 
+        // update the moving disc's position in world coordinate
+        game.updateDiscPosition(drawingState);
+
         // draw to the framebuffer
         gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
         gl.viewport(0, 0, framebuffer.resolution, framebuffer.resolution); // never forget to set viewport as our
@@ -167,8 +175,13 @@ function setup() {
             if(object.drawAfter)
                 object.drawAfter(drawingState); // no drawAfter functions actually
         });
-        
-        window.requestAnimationFrame(draw);
+
+        if (index--) {
+            window.requestAnimationFrame(draw);
+        } else {
+            fps = count * 1000 / (performance.now()- startTime); // update fps and 1 second = 1000 mill-seconds
+            draw();
+        }
     }
     draw();
 }
