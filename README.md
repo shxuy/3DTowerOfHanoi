@@ -32,12 +32,12 @@ hot keys:
 4. You could click the button 'solve it' to watch the solving animation
 
 ## Animation performance
-| browser\platform | Windows                           | Mac OS      | Ubuntu |
-| -----------------| --------------------------------- | ----------- | ------ |
-| Chrome           | frozen                            | frozen      | frozen |
-| Firefox          | discs moving faster than I expect | untested    | fluent |
-| Safari           | N/A                               | very frozen | N/A    |
-| Edges            | crash                             | N/A         | N/A    |
+| browser\platform | Windows  | Mac OS      | Ubuntu |
+| :--------------: | :------: | :---------: | :----: |
+| **Chrome**       | frozen   | frozen      | frozen |
+| **Firefox**      | untested | untested    | fluent |
+| **Safari**       | N/A      | very frozen | N/A    |
+| **Edges**        | crash    | N/A         | N/A    |
   
 If you want make animation more fluent, please use a smaller number for framebuffer.resolution defined in allObjects.js 
 at the expense of aliasing of the shadow.
