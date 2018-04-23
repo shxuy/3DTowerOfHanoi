@@ -51,7 +51,7 @@ modify numbers in function Game in gameLogic.js
 main.js
 
 ## Miscellaneous
-1. It is best for computers, not mobile phones.
+1. It is best for computers or iPads, not mobile phones.
 2. I meant to let users use mouse to drag and drop any discs, but the implementation will be too complicated without a 
 physics engine because I have to implement collusion detection and mouse selection detection by myself. It is unwise 
 to reinvent the wheel and WebGL is a little low-level for games so I suggest you choosing any game engine such as 
