@@ -43,7 +43,8 @@ def main(argv):
     for i in range(0, len(argv)):
         filename = argv[i]
         tokens = filename.split(".")
-        if len(tokens) >= 1 and (tokens[len(tokens) - 1] == "jpg" or tokens[len(tokens) - 1] == "jpeg" or tokens[len(tokens) - 1] == "png"):
+        if len(tokens) >= 1 and (tokens[len(tokens) - 1] == "jpg" or tokens[len(tokens) - 1] == "jpeg"
+                                 or tokens[len(tokens) - 1] == "png"):
             print("Parsing File : %s" % filename)
             parse_file(filename, tokens[len(tokens) - 1])
 

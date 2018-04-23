@@ -128,6 +128,30 @@ function ArcBall(canvas, callback) {
         if (that.callback) that.callback();
     });
 
+    // support touch screen
+    canvas.addEventListener("touchstart",function(e) {
+        var sx = canvas.width / 2;
+        var sy = canvas.height / 2;
+        var nx = (e.pageX - sx) / sx;
+        var ny = -(e.pageY - sy) / sy;
+        that.click(nx,ny)
+
+    });
+    canvas.addEventListener("touchmove",function(e) {
+        var sx = canvas.width / 2;
+        var sy = canvas.height / 2;
+        var nx = (e.pageX - sx) / sx;
+        var ny = -(e.pageY - sy) / sy;
+        if (that.mode) {
+            that.computeNow(nx, ny);
+            if (that.callback) that.callback();
+        }
+    });
+    document.addEventListener("touchend",function(e) {
+        that.mode = 0;
+        if (that.callback) that.callback();
+    });
+
 }
 ArcBall.prototype.reset = function() {
     "use strict";
