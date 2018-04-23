@@ -97,34 +97,28 @@ function setup() {
            in fragment shaders of every object
         3. Compute light direction in camera coordinate for every vertex in fragment shaders of every object
 
-        Here is an example for ground-fs: (only two places are changed)
+        Here is an example for disc-fs: (only two lines are changed)
 
         #ifdef GL_ES
             precision highp float;
         #endif
         uniform vec3 uColor;
-        // delete: uniform vec3 uLightDirection;
-        // add uLightPosition:
+        // replace: uniform vec3 uLightDirection; by:
         uniform vec3 uLightPosition;
-        uniform vec3 uLightColor;
-        uniform sampler2D uShadowMap;
-        varying vec3 fNormal;
-        varying vec3 fPosition;
-        varying vec4 vPositionFromLight;
+        // all other uniform, varying or const variables are unchanged, so I omit this part
 
-        vec2 blinnPhongShading(vec3 lightDirection, float lightIntensity, float ambientCoefficient,
-            float diffuseCoefficient, float specularCoefficient, float specularExponent)
-        {
-            // nothing's changed here, so I omit this part.
-        }
+        // functions pulse, blinnPhongShading and unpackDepth are unchanged here, so I omit this part.
 
         void main(void) {
             vec3 shadowCoordinate = (vPositionFromLight.xyz / vPositionFromLight.w) / 2.0 + 0.5;
-            float depth = texture2D(uShadowMap, shadowCoordinate.xy).a;
-            float visibility = (shadowCoordinate.z > depth + 0.005) ? 0.5 : 1.0;
-            // replace: vec2 light = blinnPhongShading(uLightDirection, 1.0, 0.4, 1.0, 1.5, 30.0); by:
-            vec2 light = blinnPhongShading(uLightPosition - fPosition, 1.0, 0.4, 1.0, 1.5, 30.0);
-            vec3 ambientAndDiffuseColor = light.x * uColor;
+            vec4 rgbaDepth = texture2D(uShadowMap, shadowCoordinate.xy);
+            float depth = unpackDepth(rgbaDepth); // decode the depth value from the depth map
+            float visibility = (shadowCoordinate.z > depth + 0.00001) ? 0.5 : 1.0;
+            vec2 light = blinnPhongShading(uLightDirection, 1.0, 0.35, 1.0, 1.5, 30.0);
+            // replace: vec2 light = blinnPhongShading(uLightDirection, 1.0, 0.35, 1.0, 1.5, 30.0); by:
+            vec2 light = blinnPhongShading(uLightPosition - fPosition, 1.0, 0.35, 1.0, 1.5, 30.0);
+            vec3 objectColor = (1.0 + 0.3 * pulse(uPosition.z, 0.1)) * uColor; // add some stripes
+            vec3 ambientAndDiffuseColor = light.x * objectColor;
             vec3 specularColor = light.y * uLightColor;
 	        gl_FragColor = vec4(visibility * (ambientAndDiffuseColor + specularColor), 1.0);
         }
