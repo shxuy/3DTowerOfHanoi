@@ -10,3 +10,7 @@
     float: left;
     width: 33%;
 }
+.button {
+    -webkit-appearance: button;
+    height: 30px;
+}
