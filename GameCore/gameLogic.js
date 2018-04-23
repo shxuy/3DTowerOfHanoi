@@ -17,7 +17,7 @@ function Game() {
 
     // put all discs to the first rod
     this.heightOfDisc = 10;
-    var discPrecision = 50;
+    var discPrecision = 200;
     // the inner diameter of a disc is the diameter of a rod
     this.rods[0].stackOfDiscs.push(new Disc('disc1', [-rodDistance, 0 * this.heightOfDisc, 0], 120, rodDiameter,
                             this.heightOfDisc, discPrecision, normalizeRgb(233, 153, 63))); // vertex color is orange
@@ -42,6 +42,8 @@ function Game() {
     this.playerSteps = []; // record player's every step
     
     this.hasSucceeded = false; // avoid infinite congratulations
+
+    this.displayMode = false;
 }
 
 Game.prototype.getNumberOfRods = function() {
@@ -49,8 +51,8 @@ Game.prototype.getNumberOfRods = function() {
 }
 
 Game.prototype.getNumberOfDiscs = function() {
-    var count;
-    for (var i = 0; i < this.getNumberOfRods; i++)
+    var count = 0;
+    for (var i = 0; i < this.getNumberOfRods(); i++)
         count += this.rods[i].getNumberOfDiscs();
     return count;
 }
@@ -161,7 +163,9 @@ Game.prototype.updateDiscPosition = function(drawingState) {
  */
 Game.prototype.checkResult = function() {
     var targetRod = this.rods[this.getNumberOfRods() - 1]; // the last rod is the target rod of the game
-    if (!this.hasSucceeded && targetRod.getNumberOfDiscs() === this.getNumberOfDiscs()) {
+    if (!this.hasSucceeded
+     && !this.movingUpwards && !this.movingVertically && !this.movingDownwards // nothing is moving
+     && targetRod.getNumberOfDiscs() === this.getNumberOfDiscs()) {
         alert('Congratulations!');
 
         $('#button-solve-it')[0].disabled = true;

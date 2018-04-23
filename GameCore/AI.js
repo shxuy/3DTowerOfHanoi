@@ -3,7 +3,6 @@
 /**
  * a stupid artificial intelligence
  */
-
 Game.prototype.getSolution = function() {
     var solution = [];
 
@@ -40,34 +39,57 @@ Game.prototype.getSolution = function() {
     return solution;
 }
 
-Game.prototype.displaySolution = function () {
-    if (this.hasSucceeded) {
-        alert('You have already succeeded!');
-        $('#button-solve-it')[0].disabled = true;
-        return;
+// this is a function that runs at loading time (note the parenthesis at the end)
+(function() {
+    var displayStepIndex = 0;
+
+    // begin moving the first disc without waiting
+    var wait = 0; // milli-seconds
+
+    var lastTime = undefined;
+
+    var solution;
+
+    Game.prototype.displaySolution = function (drawingState) {
+        if (this.displayMode) {
+ /*
+
+            // wait until nothing is moving
+            if (this.movingUpwards || this.movingVertically || this.movingDownwards)
+                return;
+
+            // on the first call, just get the solution
+            if (!lastTime) {
+                lastTime = drawingState.realTime;
+                solution = this.getSolution();
+                return;
+            }
+
+
+            if (displayStepIndex < solution.length) {
+                if (wait <= 0) {
+                    var step = solution[displayStepIndex];
+                    this.tryToMoveDisc(step[0], step[1]);
+
+                    // wait half a second between every two moves
+                    wait = 500; // milli-seconds
+                } else {
+                    var delta = drawingState.realTime - lastTime;
+                    wait = Math.max(wait - delta, 0);
+                }
+            } else {
+                this.displayMode = false; // turn off the display mode
+
+                // restore user controls
+                enableButtons();
+                bindKeysToGame(this);
+
+                // but we will never congratulate player again even when he succeeds again because I assume player just
+                // continues to move discs for fun.
+            }
+        }
     }
+*/
+})();
 
-    if (this.movingUpwards || this.movingVertically || this.movingDownwards) {
-        alert('please wait until the current animation is ended.');
-        return;
-    }
 
-    disableButtons();
-    disableKeys();
-
-    var solution = this.getSolution();
-
-    for (step in solution) {
-        game.tryToMoveDisc(step[0], step[1]);
-
-        // waiting for the end of a move
-        while (this.movingUpwards || this.movingVertically || this.movingDownwards)
-            continue;
-
-        // wait half a second
-        var wait = 500; // milli-seconds
-        var nextTime = Date.now() + wait;
-        while (Date.now() < nextTime)
-            continue;
-    }
-}

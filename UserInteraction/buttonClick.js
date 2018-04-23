@@ -20,7 +20,21 @@ function bindButtonsToGame(game) {
         game.tryToMoveDisc(3, 2);
     }
     $('#button-solve-it')[0].onclick = function () {
-        game.displaySolution();
+        if (game.hasSucceeded) {
+            alert('You have already succeeded!');
+            $('#button-solve-it')[0].disabled = true;
+            return;
+        }
+
+        if (game.movingUpwards || game.movingVertically || game.movingDownwards) {
+            alert('please wait until the current animation is ended.');
+            return;
+        }
+
+        disableButtons();
+        disableKeys();
+
+        game.displayMode = true; // open the display mode
     }
 }
 

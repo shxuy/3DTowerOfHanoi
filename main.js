@@ -59,8 +59,6 @@ function setup() {
      * the main drawing function
     */
     function draw() {
-        // check whether the game is over
-        game.checkResult();
 
         // figure out the transforms
         var eye = [0, 150, 300];
@@ -140,8 +138,14 @@ function setup() {
             realTime : realTime,
         }
 
+        if (game.displayMode)
+            game.displaySolution(drawingState);
+
         // update the moving disc's position in world coordinate
         game.updateDiscPosition(drawingState);
+
+        // check whether the game is over
+        game.checkResult();
 
         // draw to the framebuffer
         gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
@@ -178,7 +182,8 @@ function setup() {
         });
 
         frameIndex++;
-        realTime += 1000 / fps; // advance the clock appropriately (unless its stopped)
+        realTime += 1000 / fps; // advance the clock appropriately (unless the screen is not refreshing when the web
+        // page loses focus or when players invoke an alert message defined in function tryToMoveDisc in gameLogic.js)
 
         if (frameIndex === frameCount) {
             // update fps and 1 second = 1000 mill-seconds

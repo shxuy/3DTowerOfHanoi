@@ -247,6 +247,7 @@ function createFramebufferForShadow(drawingState) {
        expense of aliasing of the shadow
        */
     framebuffer.resolution = Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE), gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 2;
+    framebuffer.resolution = 2048;
     // use null to return the texture's image data pointer to system's frame buffer (this step is unnecessary)
     // in fact, you could use any number in texImage2D instead of resolution.
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.resolution, framebuffer.resolution, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
