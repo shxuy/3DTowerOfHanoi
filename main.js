@@ -60,6 +60,9 @@ function setup() {
     */
     function draw() {
 
+        // now last frame must has been drawn on the screen, so we could check whether the game is over
+        game.checkResult();
+
         // figure out the transforms
         var eye = [0, 150, 300];
         var target = [0, 0, 0];
@@ -178,9 +181,6 @@ function setup() {
                 object.drawAfter(drawingState); // no drawAfter functions actually
         });
 
-        // after the current frame is drawn on the screen, check whether the game is over
-        game.checkResult();
-
         frameIndex++;
         realTime += 1000 / fps; // advance the clock appropriately (unless the screen is not refreshing when the web
         // page loses focus or when players invoke an alert message defined in function tryToMoveDisc in gameLogic.js)
@@ -194,8 +194,6 @@ function setup() {
             bindKeysToGame(game);
             ab = new ArcBall(canvas);
         }
-
-
 
         window.requestAnimationFrame(draw);
     }
