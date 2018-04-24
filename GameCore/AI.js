@@ -37,7 +37,7 @@ Game.prototype.getSolution = function() {
     hanoi(this.getNumberOfDiscs(), 1, 2, 3);
 
     return solution;
-}
+};
 
 // this is a function that runs at loading time (note the parenthesis at the end)
 (function() {
@@ -52,11 +52,6 @@ Game.prototype.getSolution = function() {
 
     Game.prototype.displaySolution = function (drawingState) {
         if (this.displayMode) {
- /*
-
-            // wait until nothing is moving
-            if (this.movingUpwards || this.movingVertically || this.movingDownwards)
-                return;
 
             // on the first call, just get the solution
             if (!lastTime) {
@@ -65,16 +60,21 @@ Game.prototype.getSolution = function() {
                 return;
             }
 
+            var delta = drawingState.realTime - lastTime;
+            lastTime = drawingState.realTime;
+
+            // wait until nothing is moving
+            if (this.movingUpwards || this.movingVertically || this.movingDownwards)
+                return;
 
             if (displayStepIndex < solution.length) {
                 if (wait <= 0) {
                     var step = solution[displayStepIndex];
                     this.tryToMoveDisc(step[0], step[1]);
-
+                    displayStepIndex++;
                     // wait half a second between every two moves
                     wait = 500; // milli-seconds
                 } else {
-                    var delta = drawingState.realTime - lastTime;
                     wait = Math.max(wait - delta, 0);
                 }
             } else {
@@ -82,14 +82,14 @@ Game.prototype.getSolution = function() {
 
                 // restore user controls
                 enableButtons();
+                $('#button-solve-it')[0].disabled = true;
                 bindKeysToGame(this);
 
                 // but we will never congratulate player again even when he succeeds again because I assume player just
                 // continues to move discs for fun.
             }
         }
-    }
-*/
+    };
 })();
 
 

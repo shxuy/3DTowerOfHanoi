@@ -144,9 +144,6 @@ function setup() {
         // update the moving disc's position in world coordinate
         game.updateDiscPosition(drawingState);
 
-        // check whether the game is over
-        game.checkResult();
-
         // draw to the framebuffer
         gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
         gl.viewport(0, 0, framebuffer.resolution, framebuffer.resolution); // never forget to set viewport as our
@@ -181,6 +178,9 @@ function setup() {
                 object.drawAfter(drawingState); // no drawAfter functions actually
         });
 
+        // after the current frame is drawn on the screen, check whether the game is over
+        game.checkResult();
+
         frameIndex++;
         realTime += 1000 / fps; // advance the clock appropriately (unless the screen is not refreshing when the web
         // page loses focus or when players invoke an alert message defined in function tryToMoveDisc in gameLogic.js)
@@ -194,6 +194,8 @@ function setup() {
             bindKeysToGame(game);
             ab = new ArcBall(canvas);
         }
+
+
 
         window.requestAnimationFrame(draw);
     }
