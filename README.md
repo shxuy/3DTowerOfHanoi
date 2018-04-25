@@ -52,6 +52,13 @@ Game.prototype.updateDiscPosition in gameLogic.js
 4. I use some parallel lights, but you can swift to a dot light with a lot of work. I give out a brief instruction in
 main.js
 
+## Known bug
+1. If you use Safari, open the GitHub Pages link in new tab but do not swift to the web page immediately, the speed of 
+the moving disc will be abnormally fast. The reason why the issue exists is that I use the first 10 frames to compute 
+frame per second(FPS) and the speed of the moving disc depends on it. If the web page does not have focus, animation 
+will be stopped by browser automatically to save energy so that the interval between the start time and the end time of 
+my timer will be quite long and I cannot get the correct FPS. However, Chrome does not have the problem.
+
 ## Miscellaneous
 1. It is best for computers or iPads, not mobile phones.
 2. I meant to let users use mouse to drag and drop any discs, but the implementation will be too complicated without a 
