@@ -148,6 +148,7 @@ function setup() {
             lightProjection : lightProjectionM,
             lightView : lightViewM,
             shadowMap : framebuffer.texture,
+            shadowMapResolution: framebuffer.resolution,
             realTime : realTime,
         }
 

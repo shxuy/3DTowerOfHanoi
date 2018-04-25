@@ -89,6 +89,7 @@ var Disc = undefined;
             shaderProgram.ColorLoc = gl.getUniformLocation(shaderProgram, 'uColor');
             shaderProgram.LightDirectionLoc = gl.getUniformLocation(shaderProgram, 'uLightDirection');
             shaderProgram.LightColorLoc = gl.getUniformLocation(shaderProgram, 'uLightColor');
+            shaderProgram.ShadowMapResolutionLoc = gl.getUniformLocation(shaderProgram, 'uShadowMapResolution');
             shaderProgram.ShadowMapLoc = gl.getUniformLocation(shaderProgram, 'uShadowMap');
         }
 
@@ -314,6 +315,7 @@ var Disc = undefined;
         gl.uniform3fv(shaderProgram.ColorLoc, this.color);
         gl.uniform3fv(shaderProgram.LightDirectionLoc, drawingState.lightDirection);
         gl.uniform3fv(shaderProgram.LightColorLoc, drawingState.lightColor);
+        gl.uniform1f(shaderProgram.ShadowMapResolutionLoc, drawingState.shadowMapResolution);
         gl.uniform1i(shaderProgram.ShadowMapLoc, 0); // we will store the shadow map in TMU0 soon, so instruct shader
         // programs to use use TMU0
 

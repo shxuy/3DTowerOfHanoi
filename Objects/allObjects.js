@@ -65,6 +65,7 @@ fields defined:
     for a dot light
  lightView - the viewing transform for light, which means you put the camera at the position of the light.
  shadowMap - a texture storing depth value in light coordinate
+ shadowMapResolution - the width (length) of the shadow map used to anti-aliasing for shadows
 
   Things for animating:
  realTime - a number that is (roughly) the number of milliseconds since the program
@@ -82,6 +83,7 @@ fields defined:
      lightProjection : lightProjectionM,
      lightView : lightViewM,
      shadowMap : framebuffer.texture,
+     shadowMapResolution: framebuffer.resolution,
      realTime : realTime,
  }
  since main.js has not been executed and gl has not defined yet, the example does not work here.

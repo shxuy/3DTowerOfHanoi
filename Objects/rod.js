@@ -100,6 +100,7 @@ var Rod = undefined;
             shaderProgram.LightDirectionLoc = gl.getUniformLocation(shaderProgram, 'uLightDirection');
             shaderProgram.LightColorLoc = gl.getUniformLocation(shaderProgram, 'uLightColor');
             shaderProgram.ShadowMapLoc = gl.getUniformLocation(shaderProgram, 'uShadowMap');
+            shaderProgram.ShadowMapResolutionLoc = gl.getUniformLocation(shaderProgram, 'uShadowMapResolution');
             shaderProgram.TexSamplerLoc = gl.getUniformLocation(shaderProgram, 'uTexSampler');
 
             // data ...
@@ -352,6 +353,7 @@ var Rod = undefined;
         gl.uniformMatrix4fv(shaderProgram.MVPFromLightLoc, false, MVP);
         gl.uniform3fv(shaderProgram.LightDirectionLoc, drawingState.lightDirection);
         gl.uniform3fv(shaderProgram.LightColorLoc, drawingState.lightColor);
+        gl.uniform1f(shaderProgram.ShadowMapResolutionLoc, drawingState.shadowMapResolution);
         gl.uniform1i(shaderProgram.ShadowMapLoc, 0); // we will store the shadow map in TMU0 soon, so instruct shader
         // programs to use use TMU0
         gl.uniform1i(shaderProgram.TexSamplerLoc, 1); // so we will store the image texture in TMU1 soon

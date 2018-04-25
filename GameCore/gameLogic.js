@@ -10,14 +10,14 @@ function Game() {
     var rodDistance = 160; // the distance between two nearest rods
     var rodDiameter = 20;
     var rodHeight = 60;
-    var rodPrecision = 40;
+    var rodPrecision = 30;
     this.rods[0] = new Rod('rod1', [-rodDistance, 0, 0], rodDiameter, rodHeight, rodPrecision);
     this.rods[1] = new Rod('rod2', [0, 0, 0], rodDiameter, rodHeight, rodPrecision);
     this.rods[2] = new Rod('rod3', [rodDistance, 0, 0], rodDiameter, rodHeight, rodPrecision);
 
     // put all discs to the first rod
     this.heightOfDisc = 10;
-    var discPrecision = 200;
+    var discPrecision = 75;
     // the inner diameter of a disc is the diameter of a rod
     this.rods[0].stackOfDiscs.push(new Disc('disc1', [-rodDistance, 0 * this.heightOfDisc, 0], 120, rodDiameter,
                             this.heightOfDisc, discPrecision, normalizeRgb(233, 153, 63))); // vertex color is orange
