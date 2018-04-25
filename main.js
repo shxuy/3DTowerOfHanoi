@@ -52,8 +52,8 @@ function setup() {
      // performance.now()
 
     var frameIndex = 0;
-    var frameCount = 10; // use first 10 frames to compute user's fps
-    var startTimestamp = performance.now(); // for computing user's fps
+    var frameCount = 10; // only use 10 frames (the second frame to the eleventh frame) to compute user's fps
+    var startTimestamp; // for computing user's fps
 
     var fps = 60; // I assume fps is 60 Hz. It will be updated soon after the first 10 frames
 
@@ -61,6 +61,11 @@ function setup() {
      * the main drawing function
     */
     function draw() {
+
+        // since we have drawn the first frame now, the web page must have the focus
+        if (frameIndex == 1) {
+            startTimestamp = performance.now();
+        }
 
         // now last frame must has been drawn on the screen, so we could check whether the game is over
         game.checkResult();
@@ -187,7 +192,8 @@ function setup() {
         realTime += 1000 / fps; // advance the clock appropriately (unless the screen is not refreshing when the web
         // page loses focus or when players invoke an alert message defined in function tryToMoveDisc in gameLogic.js)
 
-        if (frameIndex === frameCount) {
+        // the first frame whose index is 0 is not take into consideration
+        if (frameIndex === frameCount + 1) {
             // update fps and 1 second = 1000 mill-seconds
             fps = Math.round(frameCount * 1000 / (performance.now()- startTimestamp));
 
