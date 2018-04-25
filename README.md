@@ -31,17 +31,6 @@ hot keys:
     | D   | move a disc from the 3rd rod to the 2nd rod |
 4. You could click the button 'solve it' to watch the solving animation
 
-## Animation performance
-| browser\platform | Windows  | Mac OS      | Ubuntu |
-| :--------------: | :------: | :---------: | :----: |
-| **Chrome**       | frozen   | frozen      | frozen |
-| **Firefox**      | untested | untested    | fluent |
-| **Safari**       | N/A      | very frozen | N/A    |
-| **Edges**        | crash    | N/A         | N/A    |
-  
-If you want make animation more fluent, please use a smaller number for framebuffer.resolution defined in allObjects.js 
-at the expense of aliasing of the shadow.
-
 ## Code modification suggestions
 1. If you want to adjust the position of camera in world coordinate, the angele of field of view or the position of 
 light in world coordinate, please change numbers in function draw in main.js
@@ -51,6 +40,8 @@ modify numbers in function Game in gameLogic.js
 Game.prototype.updateDiscPosition in gameLogic.js
 4. I use some parallel lights, but you can swift to a dot light with a lot of work. I give out a brief instruction in
 main.js
+5. If you want to save power when running the game, please use a smaller number for framebuffer.resolution defined in 
+allObjects.js at the expense of aliasing of the shadow.
 
 ## Known bug
 1. If you use Safari, open the GitHub Pages link in new tab but do not swift to the web page immediately, the speed of 
