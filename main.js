@@ -23,6 +23,10 @@ function setup() {
     var canvas = $('#myCanvas')[0];
     var gl = canvas.getContext('webgl'); // gl should not be a global variable and it should be wrapped in object
     // drawingState defined in allObjects.js so that you could draw many animations on one web page.
+    if (!gl) {
+        document.write('Your browser does not support WebGL, please use another browser.');
+        return;
+    }
 
     // start a new game
     var game = new Game();
