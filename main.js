@@ -85,15 +85,18 @@ function setup() {
         var projectionM = m4.perspective(fieldOfView, 2, 10, 1000);
 
         // get lighting information
-        var lightPosition = [300, 150, 300]; // the position of a single light in world coordinate
+        var lightPosition = [2, 1, 2]; // the position of a single light in world coordinate. The number should be as
+        // small as it can to utilize every pixel of the shadow map
+        // so that
         var lightDirection = v3.subtract(lightPosition, target); // now light direction is in world coordinate
         lightDirection = m4.transformPoint(viewM, lightDirection); // but we need light direction in camera coordinate,
         // as said in allObjects.js
 
         var lightViewM = m4.inverse(m4.lookAt(lightPosition, target, up));
 
-        var lightProjectionM = m4.ortho(-3000, 3000, -3000, 3000, -3000, 3000); // 3000 is big enough, but 30 is
-        // too small for projection matrix. If you use 30, the shadow map may not contain every objects in the world
+        var lightProjectionM = m4.ortho(-1050, 1050, -1050, 1050, -1050, 1050); // The number should be as small as it
+        // can to utilize every pixel of the shadow map. After testing, I found that the if you use a number smaller
+        // than 1050, the shadow map will not contain every objects in the world
 
         /* Because I use parallel light, I use orthogonal projection here.
         If you want to use dot light, please do following things:

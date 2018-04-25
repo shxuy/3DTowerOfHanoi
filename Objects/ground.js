@@ -40,7 +40,7 @@ var Ground = undefined;
     Ground = function Ground(name, position, width, color) {
         this.name = name || 'ground';
         this.position = position || [0.0, 0.0, 0.0];
-        this.width = width || 2000; // things will go from -1000 to +1000 by default
+        this.width = width || 2000; // things will go from -1000 to +1000 by default. 2000 is big enough here.
         this.color = color || normalizeRgb(255, 255, 255); // white ground
     }
 
