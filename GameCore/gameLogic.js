@@ -39,7 +39,7 @@ function Game() {
 
     this.lastTime = undefined;
 
-    this.playerSteps = []; // record player's every step
+    this.playerSteps = []; // record player's every step. It is not used in the game at all.
     
     this.hasSucceeded = false; // avoid infinite congratulations
 
@@ -80,8 +80,15 @@ Game.prototype.tryToMoveDisc = function(from, to) {
         this.rods[to - 1].stackOfDiscs[this.rods[to - 1].getNumberOfDiscs() - 1].outerDiameter <
         this.rods[from - 1].stackOfDiscs[this.rods[from - 1].getNumberOfDiscs() - 1].outerDiameter) {
         alert('The disc you want to move is bigger than the disc on the top of the '
-            + ordinalNumber(from) + ' rod');
+            + ordinalNumber(to) + ' rod');
         return;
+    }
+
+    // I assume after the first success, player will continue to move discs for fun.
+    // so we need to reset this.hasSucceeded and button-solve-it
+    if (from == 3 && !this.displayMode) {
+        this.hasSucceeded = false;
+        $('#button-solve-it')[0].disabled = false;
     }
 
     this.movingUpwards = true; // prepared for moving upwards
@@ -167,8 +174,6 @@ Game.prototype.checkResult = function() {
      && !this.movingUpwards && !this.movingVertically && !this.movingDownwards // nothing is moving
      && targetRod.getNumberOfDiscs() === this.getNumberOfDiscs()) {
         alert('Congratulations!');
-
-        $('#button-solve-it')[0].disabled = true;
         this.hasSucceeded = true;
     }
 }

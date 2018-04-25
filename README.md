@@ -47,7 +47,9 @@ at the expense of aliasing of the shadow.
 light in world coordinate, please change numbers in function draw in main.js
 2. If you want to adjust the position or the size of rods and discs, or the flying altitude of the moving disc, please
 modify numbers in function Game in gameLogic.js
-3. I use some parallel lights, but you can swift to a dot light with a lot of work. I give out a brief instruction in
+3. If you want to speed up the moving disc, please modify variable movingSpeed defined in 
+Game.prototype.updateDiscPosition in gameLogic.js
+4. I use some parallel lights, but you can swift to a dot light with a lot of work. I give out a brief instruction in
 main.js
 
 ## Miscellaneous

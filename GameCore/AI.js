@@ -1,40 +1,72 @@
 'use strict';
 
-/**
- * a stupid artificial intelligence
- */
+// get solution by recursion
 Game.prototype.getSolution = function() {
     var solution = [];
 
-    if (this.hasSucceeded) {
-        return solution;
-    }
-
-    // restore to the initial state
-    for (var i = this.playerSteps.length - 1; i >= 0 ; i--) {
-        solution.push([this.playerSteps[i][1]], [this.playerSteps[i][0]]);
+    // read the current status
+    var numberOfRods = this.getNumberOfRods();
+    var numberOfDiscs = this.getNumberOfDiscs();
+    var rods = new Array(numberOfRods);
+    for (var i = 0; i < rods.length; i++) {
+        rods[i] = [];
+        for (var j = 0; j < this.rods[i].getNumberOfDiscs(); j++)
+            rods[i].push(Number(this.rods[i].stackOfDiscs[j].name[4]));
     }
 
     /**
-     * derive the solution of 3 towers of Hanoi problem by recursion
-     * @param n: the number of discs
-     * @param source: the index of the rod which has all discs at the beginning of the game (typically, source is 1)
-     * @param temporary: the index of the rod which has not all discs at the beginning of the game and it is not the
-        target rod (typically, temporary is 2)
-     * @param destination: the index of the target rod in the game (typically, destination is 3)
+     * find the rod which owns the specified disc
+     * @param discIndex: the index of wanted disc (index starts from 1)
+     * @return: the index of rod which owns the disc (index starts from 1); if not found, return 0
      */
-    function hanoi(n, source, temporary, destination) {
-        if (n > 0) {
-            // move n - 1 discs from source rod to temporary rod via destination rod
-            hanoi(n - 1, source, destination, temporary);
-            // move the n-th disc from source rod to destination rod
-            solution.push([source, destination]);
-            // move n - 1 discs from temporary rod to destination rod via temporary rod
-            hanoi(n - 1, temporary, source, destination);
+    function findDisc(discIndex) {
+        for (var i = 0; i < rods.length; i++)
+            for (var j = 0; j < rods[i].length; j++)
+                if (rods[i][j] == discIndex)
+                    return i + 1;
+        return 0; // not found
+    }
+
+    /**
+     * derive the solution of 3 towers of Hanoi problem by recursion from any state
+     * @param n: the number of discs
+     * @param destination: the index of the target rod in the game (index starts from 1. typically, destination is 3)
+     */
+    function hanoi(n, destination) {
+        if (n < 1) {
+            throw 'n should be greater than or equal to 1';
+        } else if (n == 1) {
+            var rodIndex = findDisc(numberOfDiscs); // find the smallest disc
+            if (rodIndex != destination) {
+                rods[destination - 1].push(rods[rodIndex - 1].pop());
+                solution.push([rodIndex, destination]);
+            }
+        } else { // n > 1
+            var rodIndex = findDisc(numberOfDiscs + 1 - n);
+            if (rodIndex != destination) {
+
+                // get an leisure rod
+                var temporary;
+                for (var i = 1; i <= numberOfRods; i++) {
+                    if (rodIndex != i && destination != i) {
+                        temporary = i;
+                        break;
+                    }
+                }
+
+                // move all n - 1 smaller discs to the temporary rod
+                hanoi(n - 1, temporary);
+
+                // move the n-th disc from rodIndex rod to destination rod
+                rods[destination - 1].push(rods[rodIndex - 1].pop());
+                solution.push([rodIndex, destination]);
+            }
+            // move all n - 1 smaller discs to destination rod, too
+            hanoi(n - 1, destination);
         }
     }
 
-    hanoi(this.getNumberOfDiscs(), 1, 2, 3);
+    hanoi(this.getNumberOfDiscs(), 3);
 
     return solution;
 };
@@ -46,14 +78,14 @@ Game.prototype.getSolution = function() {
     // begin moving the first disc without waiting
     var wait = 0; // milli-seconds
 
-    var lastTime = undefined;
+    var lastTime = undefined; // we also use lastTime to denote the beginning of a display
 
     var solution;
 
     Game.prototype.displaySolution = function (drawingState) {
         if (this.displayMode) {
 
-            // on the first call, just get the solution
+            // on the first call of every display, just get the solution
             if (!lastTime) {
                 lastTime = drawingState.realTime;
                 solution = this.getSolution();
@@ -80,16 +112,16 @@ Game.prototype.getSolution = function() {
             } else {
                 this.displayMode = false; // turn off the display mode
 
+                // prepared for the next display
+                displayStepIndex = 0;
+                wait = 0;
+                lastTime = undefined;
+                solution = undefined;
+
                 // restore user controls
                 enableButtons();
-                $('#button-solve-it')[0].disabled = true;
                 bindKeysToGame(this);
-
-                // but we will never congratulate player again even when he succeeds again because I assume player just
-                // continues to move discs for fun.
             }
         }
     };
 })();
-
-

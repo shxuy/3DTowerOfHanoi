@@ -22,6 +22,7 @@ var Disc = undefined;
     // so on inside function init.
     // As to the ground, we have one and only one ground, so either way is fine.
 
+    var discIndex = 1; // for the constructor of disc
     /**
      * constructor for square Disc
      * @param name: a unique name
@@ -33,7 +34,7 @@ var Disc = undefined;
      * @param color: a 3 dimension Float32Array storing r, g, b value ranged from 0 to 1 for shaders
      */
     Disc = function Disc(name, position, outerDiameter, innerDiameter, height, precision, color) {
-        this.name = name || 'ground';
+        this.name = name || 'disc' + discIndex++;;
         this.position = position || [0.0, 0.0, 0.0];
         this.outerDiameter = outerDiameter || 60;
         this.innerDiameter = innerDiameter || 20;

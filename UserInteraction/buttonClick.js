@@ -22,7 +22,6 @@ function bindButtonsToGame(game) {
     $('#button-solve-it')[0].onclick = function () {
         if (game.hasSucceeded) {
             alert('You have already succeeded!');
-            $('#button-solve-it')[0].disabled = true;
             return;
         }
 
