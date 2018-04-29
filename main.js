@@ -98,9 +98,9 @@ function setup() {
 
         var lightViewM = m4.inverse(m4.lookAt(lightPosition, target, up));
 
-        var lightProjectionM = m4.ortho(-1050, 1050, -1050, 1050, -1050, 1050); // The number should be as small as it
+        var lightProjectionM = m4.ortho(-175, 175, -175, 175, -175, 175); // The number should be as small as it
         // can to utilize every pixel of the shadow map. After testing, I found that the if you use a number smaller
-        // than 1050, the shadow map will not contain every objects in the world
+        // than 175, the shadow map will not contain every objects in the world
 
         /* Because I use parallel light, I use orthogonal projection here.
         If you want to use dot light, please do following things:

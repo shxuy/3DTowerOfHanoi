@@ -248,7 +248,7 @@ function createFramebufferForShadow(drawingState) {
        */
     // get the max possible resolution
     var maxResolution = Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE), gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 2;
-    framebuffer.resolution = Math.min(4096, maxResolution); // I found that 4096 is good enough.
+    framebuffer.resolution = Math.min(2048, maxResolution); // Although 4096 is better, I found that 2048 is good enough.
     //framebuffer.resolution = maxResolution;
     // use null to return the texture's image data pointer to system's frame buffer (this step is unnecessary)
     // in fact, you could use any number in texImage2D instead of resolution.
