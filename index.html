@@ -107,7 +107,7 @@
                             vec4 rgbaDepth = texture2D(uShadowMap, biasedCoordinate);
                             depth = unpackDepth(rgbaDepth); // decode the depth value from the depth map
                         }
-                        sum += (shadowCoordinate.z > depth + 0.003) ? 0.5 : 1.0; // add 0.003 to eliminate Mach band, also known as shadow acne
+                        sum += (shadowCoordinate.z > depth + 0.005) ? 0.5 : 1.0; // add 0.005 to eliminate Mach band, also known as shadow acne
                     }
                 }
             }
