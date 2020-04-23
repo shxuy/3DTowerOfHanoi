@@ -11,7 +11,7 @@ The objective of the game is to move the entire stack to another rod, obeying th
 3. No disk may be placed on top of a smaller disk.
 
 ## Ways to run the program
-1. Here is the GitHub Pages link for the game: https://shxuy.github.io/3DTowerOfHanoi/index.html
+1. Here is the GitHub Pages link for the game: https://shxuy.github.io/TowerOfHanoi_3D/index.html
 2. Download all files and run index.html in your native browser
 3. Modify paths of JavaScript files in index.html and use your own server
 
